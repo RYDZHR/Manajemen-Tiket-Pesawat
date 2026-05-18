@@ -4,11 +4,18 @@
 #include "../header/types.h"
 #include "../header/utils.h"
 #include <algorithm>
+#include <cstddef>
 #include <iostream>
 #include <limits>
 #include <optional>
 #include <vector>
 using namespace std;
+
+string trim(const string &str) {
+  size_t start = str.find_first_not_of(" \t\r\n");
+  size_t end = str.find_last_not_of(" \t\r\n");
+  return (start == string::npos) ? "" : str.substr(start, end - start + 1);
+}
 
 std::optional<User> loginAccount(vector<User> &user) {
   clearScreen();
@@ -43,6 +50,7 @@ void registerAccount(vector<User> &user) {
   string name, pass, salt = "s$ltsh4#@";
   cout << "Input Name : ";
   getline(cin, name);
+  name = trim(name);
   cout << "Input Pass : ";
   getline(cin, pass);
 
