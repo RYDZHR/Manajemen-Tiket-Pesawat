@@ -33,7 +33,7 @@ void adminMenu(const User &userlogged, vector<User> &user,
     cin >> inputUser;
 
     sortVectorData(user, flights, ticket);
-    refreshPendingTicket(ticket, flights);
+    refreshPendingTicket(user, ticket, flights);
     if (cin.fail()) {
       cin.clear();
       cin.ignore(numeric_limits<streamsize>::max(), '\n');

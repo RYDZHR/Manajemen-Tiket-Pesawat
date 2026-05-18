@@ -54,9 +54,10 @@ void viewFlight(const vector<Flight> &flights, const User &userlogged,
       passRole = (data.airlineUserID == userlogged.userId);
     } else {
       passRole = (data.departureTime > timeZoned);
-      auto it = lower_bound(
-          user.begin(), user.end(), data.airlineUserID,
-          [](const User &a, const string &b) { return a.userId < b; });
+      auto it = lower_bound(user.begin(), user.end(), data.airlineUserID,
+                            [](const User &a, const string &b) {
+                              return getNum(a.userId) < getNum(b);
+                            });
       if (it != user.end() && it->userId == data.airlineUserID)
         airlineName = it->username;
     }

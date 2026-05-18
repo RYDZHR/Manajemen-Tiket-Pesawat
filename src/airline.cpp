@@ -30,7 +30,7 @@ void airlineMenu(const User &userlogged, vector<User> &user,
     cin.ignore(numeric_limits<streamsize>::max(), '\n');
     sortVectorData(user, flights, ticket);
 
-    refreshPendingTicket(ticket, flights);
+    refreshPendingTicket(user, ticket, flights);
     if (inputUser == "1") {
       viewTotalTransaction(flights, ticket, userlogged);
       cout << "Press Enter To Continue...";

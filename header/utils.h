@@ -9,7 +9,8 @@ inline int getNum(const std::string &s) {
   return (pos != std::string::npos) ? std::stoi(s.substr(pos)) : 0;
 }
 void clearScreen();
-void refreshPendingTicket(vector<Ticket> &ticket, vector<Flight> &flights);
+void refreshPendingTicket(vector<User> &user, vector<Ticket> &ticket,
+                          vector<Flight> &flights);
 string generateId(vector<Flight> &flights);
 string generateIdTicket(vector<Ticket> &ticket);
 string generateIdUser(vector<User> &user);

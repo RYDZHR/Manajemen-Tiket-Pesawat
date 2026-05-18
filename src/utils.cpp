@@ -19,8 +19,32 @@ void clearScreen() {
   std::system("clear");
 #endif
 }
-
-void refreshPendingTicket(vector<Ticket> &ticket, vector<Flight> &flights) {
+void sortVectorData(vector<User> &user, vector<Flight> &flights,
+                    vector<Ticket> &ticket) {
+  sort(user.begin(), user.end(), [](const User &a, const User &b) {
+    auto getNum = [](const string &s) {
+      size_t pos = s.find_first_of("0123456789");
+      return (pos != string::npos) ? stoi(s.substr(pos)) : 0;
+    };
+    return getNum(a.userId) < getNum(b.userId);
+  });
+  sort(flights.begin(), flights.end(), [](const Flight &a, const Flight &b) {
+    auto getNum = [](const string &s) {
+      size_t pos = s.find_first_of("0123456789");
+      return (pos != string::npos) ? stoi(s.substr(pos)) : 0;
+    };
+    return getNum(a.flightID) < getNum(b.flightID);
+  });
+  sort(ticket.begin(), ticket.end(), [](const Ticket &a, const Ticket &b) {
+    auto getNum = [](const string &s) {
+      size_t pos = s.find_first_of("0123456789");
+      return (pos != string::npos) ? stoi(s.substr(pos)) : 0;
+    };
+    return getNum(a.ticketID) < getNum(b.ticketID);
+  });
+}
+void refreshPendingTicket(vector<User> &user, vector<Ticket> &ticket,
+                          vector<Flight> &flights) {
   string statusP = "Pending";
   auto timeNow = chrono::system_clock::now();
   time_t t = chrono::system_clock::to_time_t(timeNow);
@@ -30,10 +54,6 @@ void refreshPendingTicket(vector<Ticket> &ticket, vector<Flight> &flights) {
 
   sort(ticket.begin(), ticket.end(), [](const Ticket &a, const Ticket &b) {
     return a.bookingStatus < b.bookingStatus;
-  });
-
-  sort(flights.begin(), flights.end(), [](const Flight &a, const Flight &b) {
-    return a.flightID < b.flightID;
   });
 
   auto pos = lower_bound(ticket.begin(), ticket.end(), statusP,
@@ -62,9 +82,11 @@ void refreshPendingTicket(vector<Ticket> &ticket, vector<Flight> &flights) {
   });
 
   if (changed) {
+    sortVectorData(user, flights, ticket);
     saveFlightFile(flights);
     saveTicketFile(ticket);
   }
+  sortVectorData(user, flights, ticket);
 }
 
 string generateId(vector<Flight> &flights) {
@@ -156,29 +178,4 @@ bool checkIsDigit(string &x) {
     }
   }
   return false;
-}
-
-void sortVectorData(vector<User> &user, vector<Flight> &flights,
-                    vector<Ticket> &ticket) {
-  sort(user.begin(), user.end(), [](const User &a, const User &b) {
-    auto getNum = [](const string &s) {
-      size_t pos = s.find_first_of("0123456789");
-      return (pos != string::npos) ? stoi(s.substr(pos)) : 0;
-    };
-    return getNum(a.userId) < getNum(b.userId);
-  });
-  sort(flights.begin(), flights.end(), [](const Flight &a, const Flight &b) {
-    auto getNum = [](const string &s) {
-      size_t pos = s.find_first_of("0123456789");
-      return (pos != string::npos) ? stoi(s.substr(pos)) : 0;
-    };
-    return getNum(a.flightID) < getNum(b.flightID);
-  });
-  sort(ticket.begin(), ticket.end(), [](const Ticket &a, const Ticket &b) {
-    auto getNum = [](const string &s) {
-      size_t pos = s.find_first_of("0123456789");
-      return (pos != string::npos) ? stoi(s.substr(pos)) : 0;
-    };
-    return getNum(a.ticketID) < getNum(b.ticketID);
-  });
 }

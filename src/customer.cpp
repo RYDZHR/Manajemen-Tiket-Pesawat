@@ -34,22 +34,8 @@ void customerMenu(User &userlogged, vector<User> &user, vector<Flight> &flights,
     cout << "Input User : ";
     cin >> inputUser;
     cin.ignore(numeric_limits<streamsize>::max(), '\n');
-    sort(flights.begin(), flights.end(), [](const Flight &a, const Flight &b) {
-      auto getNum = [](const string &s) {
-        size_t pos = s.find_first_of("0123456789");
-        return (pos != string::npos) ? stoi(s.substr(pos)) : 0;
-      };
-      return getNum(a.flightID) < getNum(b.flightID);
-    });
-    sort(ticket.begin(), ticket.end(), [](const Ticket &a, const Ticket &b) {
-      auto getNum = [](const string &s) {
-        size_t pos = s.find_first_of("0123456789");
-        return (pos != string::npos) ? stoi(s.substr(pos)) : 0;
-      };
-      return getNum(a.ticketID) < getNum(b.ticketID);
-    });
-
-    refreshPendingTicket(ticket, flights);
+    sortVectorData(user, flights, ticket);
+    refreshPendingTicket(user, ticket, flights);
     if (inputUser == "1") {
       bookingTicket(flights, ticket, user, userlogged);
     } else if (inputUser == "2") {
@@ -120,6 +106,7 @@ void payTicket(vector<Ticket> &ticket, const User &userlogged) {
   Table tableTicket;
   int i = 1;
   string inputUser;
+
   tableTicket.add_row({"No", "Ticket Id", "Flight Id", "User Id", "Username",
                        "Ticket Status", "Seat Number", "Pending Limit"});
   for (auto &data : ticket) {
@@ -135,13 +122,12 @@ void payTicket(vector<Ticket> &ticket, const User &userlogged) {
     cout << tableTicket << endl;
     cout << "Input Ticket Id : ";
     cin >> inputUser;
-
     auto pos = lower_bound(ticket.begin(), ticket.end(), inputUser,
                            [&](const Ticket &a, const string &targetId) {
                              return getNum(a.ticketID) < getNum(targetId);
                            });
     if (pos != ticket.end() && pos->ticketID == inputUser &&
-        pos->userID == userlogged.userId && pos->bookingStatus == "Pending") {
+        pos->bookingStatus == "Pending" && pos->userID == userlogged.userId) {
       cout << "Pay Ticket ? (y/n) : ";
       cin >> inputUser;
       if (inputUser == "y" || inputUser == "Y") {
@@ -155,6 +141,7 @@ void payTicket(vector<Ticket> &ticket, const User &userlogged) {
       }
     } else {
       cout << "Ticket Id Not Found\n";
+      cout << pos->ticketID;
     }
   } else {
     cout << "No Pending Ticket Found\n";
