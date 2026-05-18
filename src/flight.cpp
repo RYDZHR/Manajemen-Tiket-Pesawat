@@ -74,4 +74,5 @@ void viewFlight(const vector<Flight> &flights, const User &userlogged,
     cout << "Flight Not Found\n";
   else
     cout << tableData << endl;
+  cin.ignore(1000, '\n');
 }

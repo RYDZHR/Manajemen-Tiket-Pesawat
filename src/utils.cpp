@@ -137,6 +137,9 @@ string toStringRole(Role &role) {
 
 bool isValidDateTime(const string &datetime) {
   tm t = {};
+  if (datetime.length() != 16) {
+    return false;
+  }
   istringstream ss(datetime);
   ss >> get_time(&t, "%Y-%m-%d %H:%M");
   if (ss.fail() || !ss.eof())
