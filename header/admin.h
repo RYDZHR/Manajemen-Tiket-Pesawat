@@ -1,7 +1,7 @@
 #pragma once
 #include "types.h"
 #include <vector>
-using namespace std;
+
 void adminMenu(const User &userlogged, vector<User> &user,
                vector<Flight> &flights, vector<Ticket> &ticket);
 void banUserAccount(vector<User> &user);

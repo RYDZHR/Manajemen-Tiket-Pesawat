@@ -48,6 +48,7 @@ int loadFile(vector<User> &user, vector<Ticket> &ticket,
         temp.clear();
       }
     }
+
     if (getline(flightFile, header)) {
     }
     while (getline(flightFile, line)) {

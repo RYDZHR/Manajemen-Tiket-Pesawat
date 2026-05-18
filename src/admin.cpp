@@ -14,6 +14,7 @@
 #include <vector>
 using namespace std;
 using namespace chrono;
+
 void adminMenu(const User &userlogged, vector<User> &user,
                vector<Flight> &flights, vector<Ticket> &ticket) {
   int inputUser;
@@ -30,28 +31,8 @@ void adminMenu(const User &userlogged, vector<User> &user,
     cout << "7. Exit\n";
     cout << "Input : ";
     cin >> inputUser;
-    sort(user.begin(), user.end(), [](const User &a, const User &b) {
-      auto getNum = [](const string &s) {
-        size_t pos = s.find_first_of("0123456789");
-        return (pos != string::npos) ? stoi(s.substr(pos)) : 0;
-      };
-      return getNum(a.userId) < getNum(b.userId);
-    });
-    sort(flights.begin(), flights.end(), [](const Flight &a, const Flight &b) {
-      auto getNum = [](const string &s) {
-        size_t pos = s.find_first_of("0123456789");
-        return (pos != string::npos) ? stoi(s.substr(pos)) : 0;
-      };
-      return getNum(a.flightID) < getNum(b.flightID);
-    });
-    sort(ticket.begin(), ticket.end(), [](const Ticket &a, const Ticket &b) {
-      auto getNum = [](const string &s) {
-        size_t pos = s.find_first_of("0123456789");
-        return (pos != string::npos) ? stoi(s.substr(pos)) : 0;
-      };
-      return getNum(a.ticketID) < getNum(b.ticketID);
-    });
 
+    sortVectorData(user, flights, ticket);
     refreshPendingTicket(ticket, flights);
     if (cin.fail()) {
       cin.clear();
@@ -118,10 +99,8 @@ void addNewAccount(vector<User> &user) {
   getline(cin, name);
   cout << "Input Pass : ";
   getline(cin, pass);
-  auto it = lower_bound(
-      user.begin(), user.end(), name,
-      [](const User &a, const string &b) { return a.username < b; });
-
+  auto it = find_if(user.begin(), user.end(),
+                    [&name](const User &a) { return a.username == name; });
   if (it != user.end() && it->username == name) {
     cout << "Username Already Used By Another User\n";
     return;
@@ -154,9 +133,11 @@ void banUserAccount(vector<User> &user) {
   viewListAccount(user);
   cout << "Input User Id : ";
   getline(cin, userId);
-  auto pos = lower_bound(
-      user.begin(), user.end(), userId,
-      [](const User &a, const string &Id) { return a.userId < Id; });
+
+  auto pos = lower_bound(user.begin(), user.end(), userId,
+                         [&](const User &a, const string &targetId) {
+                           return getNum(a.userId) < getNum(targetId);
+                         });
   if (pos != user.end() && pos->userId == userId) {
     cout << "Account Found : " << pos->userId << " | " << pos->username << endl;
     cout << "1. Ban Account\n";
@@ -203,9 +184,10 @@ void removeUserAccount(vector<User> &user) {
   cout << "Input User Id : ";
   getline(cin, userId);
 
-  auto pos = lower_bound(
-      user.begin(), user.end(), userId,
-      [](const User &a, const string &id) { return a.userId < id; });
+  auto pos = lower_bound(user.begin(), user.end(), userId,
+                         [&](const User &a, const string &targetId) {
+                           return getNum(a.userId) < getNum(targetId);
+                         });
   if (pos != user.end() && pos->userId == userId) {
     cout << "Account Found : " << pos->userId << " | " << pos->username << endl;
     cout << "Remove Account (y/n) ?\n";

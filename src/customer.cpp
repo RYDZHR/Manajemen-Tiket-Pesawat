@@ -18,10 +18,8 @@ using namespace std;
 using namespace tabulate;
 using namespace chrono_literals;
 using namespace chrono;
-
 void customerMenu(User &userlogged, vector<User> &user, vector<Flight> &flights,
                   vector<Ticket> &ticket) {
-  cout << userlogged.userId;
   string inputUser;
   clearScreen();
   while (true) {
@@ -84,8 +82,8 @@ void bookingTicket(vector<Flight> &flights, vector<Ticket> &ticket,
   cin.ignore(numeric_limits<streamsize>::max(), '\n');
 
   auto pos = lower_bound(flights.begin(), flights.end(), inputUser,
-                         [](const Flight &id, const string &inputUser) {
-                           return id.flightID < inputUser;
+                         [&](const Flight &a, const string &targetId) {
+                           return getNum(a.flightID) < getNum(targetId);
                          });
   if (pos != flights.end() && pos->flightID == inputUser) {
     pos->displayInfo();
@@ -137,9 +135,10 @@ void payTicket(vector<Ticket> &ticket, const User &userlogged) {
     cout << tableTicket << endl;
     cout << "Input Ticket Id : ";
     cin >> inputUser;
+
     auto pos = lower_bound(ticket.begin(), ticket.end(), inputUser,
-                           [](const Ticket &id, const string &inputUser) {
-                             return id.ticketID < inputUser;
+                           [&](const Ticket &a, const string &targetId) {
+                             return getNum(a.ticketID) < getNum(targetId);
                            });
     if (pos != ticket.end() && pos->ticketID == inputUser &&
         pos->userID == userlogged.userId && pos->bookingStatus == "Pending") {
@@ -186,10 +185,9 @@ void cancelTicket(vector<Flight> &flights, vector<Ticket> &ticket,
     cin >> inputUser;
 
     auto posT = lower_bound(ticket.begin(), ticket.end(), inputUser,
-                            [](const Ticket &id, const string &inputUser) {
-                              return id.ticketID < inputUser;
+                            [&](const Ticket &a, const string &targetId) {
+                              return getNum(a.ticketID) < getNum(targetId);
                             });
-
     if (posT == ticket.end() || posT->ticketID != inputUser ||
         posT->userID != userlogged.userId || posT->bookingStatus != "Pending") {
       cout << "Ticket Id Not Found\n";
@@ -198,7 +196,7 @@ void cancelTicket(vector<Flight> &flights, vector<Ticket> &ticket,
 
     auto posF = lower_bound(flights.begin(), flights.end(), posT->flightID,
                             [](const Flight &id, const string &flightID) {
-                              return id.flightID < flightID;
+                              return getNum(id.flightID) < getNum(flightID);
                             });
 
     if (posF == flights.end() || posF->flightID != posT->flightID) {

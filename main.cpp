@@ -16,6 +16,8 @@
 #include "header/customer.h"
 #include "header/fileHandler.h"
 #include "header/types.h"
+#include "header/utils.h"
+#include <algorithm>
 #include <iostream>
 #include <limits>
 #include <optional>
@@ -40,15 +42,14 @@ void mainMenu(vector<User> &user, vector<Flight> &flights,
     cout << "Input : ";
     cin >> input;
     cin.ignore(numeric_limits<streamsize>::max(), '\n');
-
+    sortVectorData(user, flights, ticket);
     if (input == "1") {
       std::optional<User> userLogged = loginAccount(user);
       if (userLogged) {
         if (userLogged->role == ADMIN)
           adminMenu(*userLogged, user, flights, ticket);
         if (userLogged->role == CUSTOMER)
-          cout << userLogged->role;
-        customerMenu(*userLogged, user, flights, ticket);
+          customerMenu(*userLogged, user, flights, ticket);
         if (userLogged->role == AIRLINE)
           airlineMenu(*userLogged, user, flights, ticket);
       }

@@ -12,6 +12,7 @@
 #include <vector>
 using namespace std;
 using namespace chrono;
+
 void airlineMenu(const User &userlogged, vector<User> &user,
                  vector<Flight> &flights, vector<Ticket> &ticket) {
   string inputUser;
@@ -27,20 +28,7 @@ void airlineMenu(const User &userlogged, vector<User> &user,
     cout << "Input User : ";
     cin >> inputUser;
     cin.ignore(numeric_limits<streamsize>::max(), '\n');
-    sort(flights.begin(), flights.end(), [](const Flight &a, const Flight &b) {
-      auto getNum = [](const string &s) {
-        size_t pos = s.find_first_of("0123456789");
-        return (pos != string::npos) ? stoi(s.substr(pos)) : 0;
-      };
-      return getNum(a.flightID) < getNum(b.flightID);
-    });
-    sort(ticket.begin(), ticket.end(), [](const Ticket &a, const Ticket &b) {
-      auto getNum = [](const string &s) {
-        size_t pos = s.find_first_of("0123456789");
-        return (pos != string::npos) ? stoi(s.substr(pos)) : 0;
-      };
-      return getNum(a.ticketID) < getNum(b.ticketID);
-    });
+    sortVectorData(user, flights, ticket);
 
     refreshPendingTicket(ticket, flights);
     if (inputUser == "1") {
@@ -67,47 +55,20 @@ void viewTotalTransaction(vector<Flight> &flights, vector<Ticket> &ticket,
                           const User &userlogged) {
   clearScreen();
   int sum = 0;
+  for (const auto &f : flights) {
+    if (f.airlineUserID == userlogged.userId) {
+      int count = 0;
 
-  sort(flights.begin(), flights.end(), [](const Flight &a, const Flight &b) {
-    auto getNum = [](const string &s) {
-      size_t pos = s.find_first_of("0123456789");
-      return (pos != string::npos) ? stoi(s.substr(pos)) : 0;
-    };
-    return getNum(a.airlineUserID) < getNum(b.airlineUserID);
-  });
-  sort(ticket.begin(), ticket.end(), [](const Ticket &a, const Ticket &b) {
-    auto getNum = [](const string &s) {
-      size_t pos = s.find_first_of("0123456789");
-      return (pos != string::npos) ? stoi(s.substr(pos)) : 0;
-    };
-    return getNum(a.flightID) < getNum(b.flightID);
-  });
-
-  auto startF = lower_bound(
-      flights.begin(), flights.end(), userlogged.userId,
-      [](const Flight &f, const string &id) { return f.airlineUserID < id; });
-  auto endF = upper_bound(
-      flights.begin(), flights.end(), userlogged.userId,
-      [](const string &id, const Flight &f) { return id < f.airlineUserID; });
-
-  for (auto itF = startF; itF != endF; ++itF) {
-    auto startT = lower_bound(
-        ticket.begin(), ticket.end(), itF->flightID,
-        [](const Ticket &t, const string &fId) { return t.flightID < fId; });
-    auto endT = upper_bound(
-        ticket.begin(), ticket.end(), itF->flightID,
-        [](const string &fId, const Ticket &t) { return fId < t.flightID; });
-
-    int count = 0;
-    for (auto itT = startT; itT != endT; ++itT) {
-      if (itT->bookingStatus == "Paid") {
-        sum += itF->price;
-        count++;
+      for (const auto &t : ticket) {
+        if (t.flightID == f.flightID && t.bookingStatus == "Paid") {
+          sum += f.price;
+          count++;
+        }
       }
+      cout << "Flight " << f.flightID << " | " << f.origin << " -> "
+           << f.destination << " | Tickets Sold: " << count
+           << " | Revenue: " << (count * f.price) << "\n";
     }
-    cout << "Flight " << itF->flightID << " | " << itF->origin << " -> "
-         << itF->destination << " | Tickets Sold: " << count
-         << " | Revenue: " << (count * itF->price) << "\n";
   }
 
   cout << "Total Revenue : " << sum << endl;
@@ -184,16 +145,18 @@ void deleteFlightData(vector<Flight> &flights, const vector<User> &user,
     cin >> inputId;
     cin.ignore(numeric_limits<streamsize>::max(), '\n');
     auto pos = lower_bound(flights.begin(), flights.end(), inputId,
-                           [](const Flight &id, const string &inputId) {
-                             return id.flightID < inputId;
+                           [&](const Flight &a, const string &targetId) {
+                             return getNum(a.flightID) < getNum(targetId);
                            });
     if (pos != flights.end() && pos->flightID == inputId &&
         pos->airlineUserID == userlogged.userId) {
       cout << "Flight Found : " << pos->flightID << " | " << pos->airlineUserID
            << endl;
-      auto it = lower_bound(
-          ticket.begin(), ticket.end(), inputId,
-          [](const Ticket &a, const string &b) { return a.flightID < b; });
+      auto it = lower_bound(ticket.begin(), ticket.end(), inputId,
+                            [](const Ticket &id, const string &targetId) {
+                              return getNum(id.flightID) < getNum(targetId);
+                            });
+
       if (it != ticket.end() && it->flightID == pos->flightID &&
           it->bookingStatus == "Paid") {
         cout << "Sorry, there is already a customer who has paid for the "
@@ -227,8 +190,8 @@ void editFlightData(vector<Flight> &flights, const vector<User> &user,
   cin >> inputId;
   cin.ignore(numeric_limits<streamsize>::max(), '\n');
   auto pos = lower_bound(flights.begin(), flights.end(), inputId,
-                         [](const Flight &id, const string &inputId) {
-                           return id.flightID < inputId;
+                         [&](const Flight &a, const string &targetId) {
+                           return getNum(a.flightID) < getNum(targetId);
                          });
   if (pos != flights.end() && pos->flightID == inputId &&
       pos->airlineUserID == userlogged.userId) {

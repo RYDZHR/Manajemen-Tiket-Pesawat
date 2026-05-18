@@ -17,14 +17,8 @@ std::optional<User> loginAccount(vector<User> &user) {
   getline(cin, name);
   cout << "Input Pass : ";
   getline(cin, pass);
-
-  sort(user.begin(), user.end(),
-       [](const User &a, const User &b) { return a.username < b.username; });
-  auto pos = lower_bound(user.begin(), user.end(), name,
-                         [](const User &a, const string &username) {
-                           return a.username < username;
-                         });
-
+  auto pos = find_if(user.begin(), user.end(),
+                     [&name](const User &a) { return a.username == name; });
   if (pos != user.end() && pos->username == name) {
     if (pos->isActive == false) {
       cout << "This Account Not Active\n";
@@ -51,9 +45,9 @@ void registerAccount(vector<User> &user) {
   getline(cin, name);
   cout << "Input Pass : ";
   getline(cin, pass);
-  auto it = lower_bound(
-      user.begin(), user.end(), name,
-      [](const User &a, const string &b) { return a.username < b; });
+
+  auto it = find_if(user.begin(), user.end(),
+                    [&name](const User &a) { return a.username == name; });
 
   if (it != user.end() && it->username == name) {
     cout << "Username Already Used By Another User\n";
@@ -70,9 +64,6 @@ void registerAccount(vector<User> &user) {
             "(123)\n";
     return;
   }
-
-  sort(user.begin(), user.end(),
-       [](const User &a, const User &b) { return a.userId < b.userId; });
 
   pass = picosha2::hash256_hex_string(pass + salt);
   user.emplace_back(generateIdUser(user), name, pass, true, CUSTOMER);

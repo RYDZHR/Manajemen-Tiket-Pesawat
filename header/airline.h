@@ -3,6 +3,7 @@
 #include <string>
 #include <vector>
 using namespace std;
+
 void airlineMenu(const User &userlogged, vector<User> &user,
                  vector<Flight> &flights, vector<Ticket> &ticket);
 void viewTotalTransaction(vector<Flight> &flights, vector<Ticket> &ticket,
