@@ -37,7 +37,7 @@ struct Flight {
 
   void displayInfo() {
     cout << "Flight ID     : " << flightID << endl;
-    cout << "Airline ID   : " << airlineUserID << endl;
+    cout << "Airline ID    : " << airlineUserID << endl;
     cout << "Origin        : " << origin << endl;
     cout << "Destination   : " << destination << endl;
     cout << "Departure     : " << departureTime << endl;

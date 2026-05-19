@@ -2,6 +2,6 @@ flightId,airlineUserId,origin,destination,datetime,price,capacity
 FL1,US3,Samarinda,Jakarta,2026-10-20 10:20,10000000,189
 FL2,US3,Aceh,Jakarta,2026-10-20 10:20,100000,150
 FL3,US3,Tarakan,Jakarta,2026-10-20 10:20,100000,120
-FL4,US4,Maluku,Jakarta,2026-10-20 10:20,100000,128
+FL4,US4,Maluku,Jakarta,2026-10-20 10:20,100000,129
 FL5,US4,Samarinda,Lombok,2027-01-20 10:29,200000,50
 FL6,US3,Samarinda,Jakarta,2026-10-11 10:12,10000,10

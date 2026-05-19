@@ -63,7 +63,7 @@ void bookingTicket(vector<Flight> &flights, vector<Ticket> &ticket,
   ostringstream oss;
   oss << put_time(localtime(&t), "%Y-%m-%d %H:%M");
   string timeZoned = oss.str();
-  cout << "Input Flight Id\n";
+  cout << "Input Flight Id : ";
   cin >> inputUser;
   cin.ignore(numeric_limits<streamsize>::max(), '\n');
 
