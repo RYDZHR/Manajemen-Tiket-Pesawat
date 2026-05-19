@@ -6,14 +6,13 @@
 #include <ctime>
 #include <iomanip>
 #include <iostream>
-#include <limits>
 #include <sstream>
 #include <string>
 #include <vector>
 using namespace std;
 using namespace tabulate;
 
-void viewFlight(const vector<Flight> &flights, const User &userlogged,
+bool viewFlight(const vector<Flight> &flights, const User &userlogged,
                 const vector<User> &user) {
   clearScreen();
   Table tableData;
@@ -36,7 +35,6 @@ void viewFlight(const vector<Flight> &flights, const User &userlogged,
     cin >> inputOri;
     cout << "Input Destination : ";
     cin >> inputDest;
-    cin.ignore(numeric_limits<streamsize>::max(), '\n');
   }
 
   tableData.add_row({"No", "Flight Id", "Airline Name", "Origin", "Destination",
@@ -70,9 +68,13 @@ void viewFlight(const vector<Flight> &flights, const User &userlogged,
     }
   }
 
-  if (i == 1)
+  if (i == 1) {
     cout << "Flight Not Found\n";
-  else
+    return false;
+  } else {
     cout << tableData << endl;
-  cin.ignore(1000, '\n');
+    cin.ignore(1000, '\n');
+    return true;
+  }
+  return false;
 }

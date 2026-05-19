@@ -56,7 +56,10 @@ void bookingTicket(vector<Flight> &flights, vector<Ticket> &ticket,
                    const vector<User> &user, const User &userlogged) {
   string name;
   clearScreen();
-  viewFlight(flights, userlogged, user);
+  bool isReady = viewFlight(flights, userlogged, user);
+  if (!(isReady)) {
+    return;
+  }
   string inputUser;
   auto timeNow = chrono::system_clock::now();
   time_t t = chrono::system_clock::to_time_t(timeNow + hours(1));

@@ -138,9 +138,13 @@ void deleteFlightData(vector<Flight> &flights, const vector<User> &user,
                       const vector<Ticket> &ticket, const User &userlogged) {
   clearScreen();
   string inputId;
+  bool isReady;
   char inputUser;
   if (userlogged.role == AIRLINE) {
-    viewFlight(flights, userlogged, user);
+    isReady = viewFlight(flights, userlogged, user);
+    if (!(isReady)) {
+      return;
+    }
     cout << "Input Flight Id : ";
     cin >> inputId;
     cin.ignore(numeric_limits<streamsize>::max(), '\n');
@@ -183,9 +187,14 @@ void editFlightData(vector<Flight> &flights, const vector<User> &user,
                     const User &userlogged) {
   clearScreen();
   string inputId;
+  bool isReady;
   int price, capacity;
   char inputUser;
-  viewFlight(flights, userlogged, user);
+  isReady = viewFlight(flights, userlogged, user);
+  if (!(isReady)) {
+    return;
+  }
+
   cout << "Input Flight Id : ";
   cin >> inputId;
   cin.ignore(numeric_limits<streamsize>::max(), '\n');
